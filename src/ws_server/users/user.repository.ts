@@ -13,6 +13,10 @@ export class UserRepository implements IRepository<IUser> {
     return this.dbService.findAll();
   }
 
+  get(id: string) {
+    return this.dbService.findById(id);
+  }
+
   add(user: IUser) {
     this.dbService.create(user);
   }

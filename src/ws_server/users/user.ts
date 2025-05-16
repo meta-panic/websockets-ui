@@ -1,6 +1,7 @@
 import { type WebSocket as WSType } from "ws";
 
 import { IUser } from "./user.interface";
+import { generateUUID } from "../utils";
 
 
 export class User implements IUser {
@@ -13,7 +14,6 @@ export class User implements IUser {
     public webSocket: WSType
   ) {
     this.winCount = 0;
-    this.id = "dsf";
-    this.password = password;
+    this.id = generateUUID();
   }
 }

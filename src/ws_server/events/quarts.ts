@@ -1,11 +1,10 @@
 import { EventNameType, IncomingMessage, EVENT_NAME_LIST } from "./event.interface";
 import { isRegistrationReq } from "./payload/registration";
 
+
 export type AllIncomingMessages = {
   [K in EventNameType]: IncomingMessage<K>
 }[EventNameType];
-
-
 
 export function isIncomingMessage(msg: unknown): msg is AllIncomingMessages {
   if (typeof msg !== "object" || msg === null) {
@@ -20,20 +19,10 @@ export function isIncomingMessage(msg: unknown): msg is AllIncomingMessages {
   }
 
   const eventName: string = potentialMsg.type;
-  const data: unknown = potentialMsg.data;
 
   if (!EVENT_NAME_LIST.includes(eventName as EventNameType)) {
     return false;
   }
 
-  const typedEventName = eventName as EventNameType;
-
-  switch (typedEventName) {
-    case "reg":
-      return isRegistrationReq(data);
-    case "reg2":
-      return data === 1;
-    default:
-      return false;
-  }
+  return true;
 }

@@ -1,19 +1,24 @@
 import { RawData, WebSocketServer, type WebSocket as WSType } from "ws";
 import { deepParse } from "./utils";
-import { IUser } from "./user/user.interface";
+import { IUser } from "./users/user.interface";
 import { IRepository } from "./DB/core/repository/repository.interface";
 import { EventNameType } from "./events/event.interface";
 import { isIncomingMessage } from "./events/quarts";
 import { IHandler } from "./events/eventHandlers/handler.interface";
+import { IRoom } from "./rooms/room.interface";
+import { EventHandler, HandlerWrapper } from ".";
 
 
 export class App {
   private readonly wsServer: WebSocketServer;
   private userRepo: IRepository<IUser>;
-  private eventHandlers?: Map<EventNameType, IHandler<EventNameType>>;
+  private roomRepo: IRepository<IRoom>;
+  private eventHandlers?: EventHandler<EventNameType>;
 
-  constructor(port: number, userRepo: IRepository<IUser>) {
+  constructor({ port, userRepo, roomRepo }: { port: number, userRepo: IRepository<IUser>, roomRepo: IRepository<IRoom> }) {
     this.userRepo = userRepo;
+    this.roomRepo = roomRepo;
+
     this.wsServer = new WebSocketServer({ port });
     this.wsServer.on("connection", (wsClient: WSType) => {
       wsClient.on("message", (data: RawData) => this.handleMessage({
@@ -34,7 +39,7 @@ export class App {
     });
   }
 
-  registerHandlers(handlers: Map<EventNameType, IHandler<EventNameType>>): this {
+  registerHandlers(handlers: EventHandler<EventNameType>): this {
     this.eventHandlers = handlers;
 
     return this;
@@ -49,14 +54,15 @@ export class App {
     }
 
     if (isIncomingMessage(parsedClientData)) {
-      const handler = this.eventHandlers.get(parsedClientData.type);
+      const handler = this.eventHandlers[parsedClientData.type] as HandlerWrapper<typeof parsedClientData.type>;
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       handler && handler({
         type: parsedClientData.type,
         data: parsedClientData.data,
         wsClient: wsClient,
-        userRepo: this.userRepo
+        userRepo: this.userRepo,
+        roomRepo: this.roomRepo
       });
 
       return;

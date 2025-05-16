@@ -5,17 +5,29 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "node ./index.js",
-        "start:dev": "nodemon ./index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "startFront": "node ./index.js",
+        "startFront:dev": "nodemon ./index.js",
+        "startWS": "webpack --mode production && node ./dist/bundle.js -- --mode=multi",
+        "startWS:dev": "nodemon --no-warnings=ExperimentalWarning --exec node --experimental-specifier-resolution=node --loader ts-node/esm src/ws_server/index.ts",
+        "lint": "eslint ./src/ws_server/"
     },
     "author": "Andrei Auchynnikau",
     "keywords": [],
     "license": "ISC",
     "devDependencies": {
-        "nodemon": "^2.0.16"
+        "@types/ws": "^8.18.1",
+        "@typescript-eslint/eslint-plugin": "^8.32.1",
+        "@typescript-eslint/parser": "^8.32.1",
+        "eslint": "^9.26.0",
+        "eslint-config-prettier": "^10.1.5",
+        "nodemon": "^2.0.16",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.32.1",
+        "webpack": "^5.99.8",
+        "webpack-cli": "^6.0.1"
     },
     "dependencies": {
-        "ws": "^8.8.0"
+        "ts-node": "^10.9.2",
+        "ws": "^8.18.2"
     }
 }

@@ -55,7 +55,7 @@ function sendAllMembersOFGameEvent(newGame: IGame) {
       type: "add_user_to_room",
       data: {
         idGame: newGame.id,
-        idPlayer: member.currentPlayerIndex || userId
+        idPlayer: member.sessionPlayerId || userId
       },
       overwriteType: "create_game"
     });

@@ -6,10 +6,19 @@ import { Coordinates, IShip } from "./shipsPosition.interface";
 import { checkAllShipsKilled, getCoordsAroundShip, hit, isShipKilled } from "./utils";
 
 
+export const BOARD_X_MIN = 0;
+export const BOARD_X_MAX = 9;
+
+export const BOARD_Y_MIN = 0;
+export const BOARD_Y_MAX = 9;
+
+
 export class Game implements IGame {
   id: string;
   members: Members<IUser>;
   attackerId: string;
+
+  private missCoordinates: Record<IUser["id"], Coordinates[]>;
 
   public constructor(
     initialMembers: MembersNotSet<IUser>
@@ -17,6 +26,10 @@ export class Game implements IGame {
     this.id = generateUUID();
     this.members = Game.prepareMembers(initialMembers);
     this.attackerId = this.getRandomAttacker();
+    this.missCoordinates = {};
+    Object.values(this.members).forEach(member => {
+      this.missCoordinates[member.sessionPlayerId] = [];
+    });
   }
 
   private static prepareMembers(members: MembersNotSet<IUser>): Members<IUser> {
@@ -25,12 +38,39 @@ export class Game implements IGame {
       if (Object.prototype.hasOwnProperty.call(members, key)) {
         preparedMembers[key] = {
           ...members[key],
-          currentPlayerIndex: generateUUID(),
+          sessionPlayerId: generateUUID(),
           hitCoordinates: []
         };
       }
     }
+
     return preparedMembers;
+  }
+
+  getRandomAttackCoordinate(attackerId: string): Coordinates {
+    if (!this.hasEnemyAliveShips(attackerId)) {
+      throw new Error(`Tne enemy has no ships anymore: ${this.findTheOtherPlayer(attackerId)?.sessionPlayerId}`);
+    }
+
+    const defender = this.findTheOtherPlayer(attackerId);
+
+    if (!defender) {
+      throw new Error(`Game ${this.id}: Could not find the defender to generate random attack coordinate.`);
+    }
+
+    let randomX: number;
+    let randomY: number;
+    let isHit: boolean;
+
+    do {
+      randomX = Math.floor(Math.random() * BOARD_X_MAX);
+      randomY = Math.floor(Math.random() * BOARD_Y_MAX);
+
+      isHit = defender.hitCoordinates.some(coord => coord.x === randomX && coord.y === randomY);
+
+    } while (isHit);
+
+    return { x: randomX, y: randomY };
   }
 
   handleAttack({ x, y, attackerId }: Coordinates & { attackerId: string }): { status: ShootStatus, coords: Coordinates[] } | "wrong turn" {
@@ -55,6 +95,8 @@ export class Game implements IGame {
       console.log(`Game ${this.id}: Miss at ${x},${y}\n`);
       this.switchAttacker();
 
+      this.missCoordinates[defender.sessionPlayerId].push(attackCoordinate);
+
       return {
         status: "miss",
         coords: [{ x, y }]
@@ -73,7 +115,6 @@ export class Game implements IGame {
 
     console.log(`Game ${this.id}: Ship of type ${hitShip.type} killed at ${hitShip.position.x},${hitShip.position.y}\n`);
 
-
     const coordinateAroundKilledShip = getCoordsAroundShip(hitShip);
     coordinateAroundKilledShip.forEach((coords) => {
       defender.hitCoordinates.push(coords);
@@ -87,15 +128,15 @@ export class Game implements IGame {
 
 
   private switchAttacker() {
-    const attacker = Object.values(this.members).find(member => member.currentPlayerIndex === this.attackerId);
+    const attacker = Object.values(this.members).find(member => member.sessionPlayerId === this.attackerId);
     if (!attacker) {
       return;
     }
 
-    const defender = this.findTheOtherPlayer(attacker?.currentPlayerIndex);
+    const defender = this.findTheOtherPlayer(attacker?.sessionPlayerId);
 
     if (attacker && defender) {
-      this.attackerId = defender.currentPlayerIndex;
+      this.attackerId = defender.sessionPlayerId;
       console.log(`Game ${this.id}: Attacker switched to ${this.attackerId}\n`);
     }
   }
@@ -104,7 +145,7 @@ export class Game implements IGame {
     const defender = this.findTheOtherPlayer(attackerId);
 
     if (!defender?.shipsPosition) {
-      throw new Error(`No ships for ${defender?.user.id} user. The game is not all set.\m`);
+      throw new Error(`No ships for ${defender?.user?.id} user. The game is not all set.\n`);
     }
 
     const allDefenderShipsKilled = checkAllShipsKilled(defender?.shipsPosition, defender.hitCoordinates);
@@ -132,11 +173,11 @@ export class Game implements IGame {
   }
 
   private findTheOtherPlayer(firstPlayer: string) {
-    return Object.values(this.members).find(member => member.currentPlayerIndex !== firstPlayer);
+    return Object.values(this.members).find(member => member.sessionPlayerId !== firstPlayer);
   }
 
   private getRandomAttacker() {
-    const memberIndexes = Object.values(this.members).map(member => member.currentPlayerIndex);
+    const memberIndexes = Object.values(this.members).map(member => member.sessionPlayerId);
 
     return memberIndexes[0];
   }
@@ -146,19 +187,9 @@ export class Game implements IGame {
   }
 
   sendToAllGamers(message: string): void {
-    if (!this.members) {
-      console.error(`Game ${this.id}: sendToAllGamers called but members is undefined.`);
-      return; // Prevent crash
-    }
-    // Assuming Object.keys(this.members) is safe if this.members is an object/Record
     Object.keys(this.members).forEach((userId) => {
-      // Ensure the member and user exist before sending the message
       const member = this.members[userId];
-      if (member && member.user && member.user.sendMessage) {
-        member.user.sendMessage(message);
-      } else {
-        console.warn(`Game ${this.id}: Could not send message to user ${userId}. Member or user/sendMessage not found.`);
-      }
+      member.user.sendMessage(message);
     });
   }
 }

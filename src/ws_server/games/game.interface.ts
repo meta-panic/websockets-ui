@@ -5,14 +5,14 @@ import { Coordinates, IShip } from "./shipsPosition.interface";
 export type Members<T extends { id: string }> = Record<T["id"], {
   user: T,
   shipsPosition?: IShip[],
-  currentPlayerIndex: string;
+  sessionPlayerId: string;
   hitCoordinates: Coordinates[];
 }>;
 
 export type MembersNotSet<T extends { id: string }> = Record<T["id"], {
   user: T,
   shipsPosition?: IShip[],
-  currentPlayerIndex?: string;
+  playerId?: string;
 }>;
 
 export interface IGame {
@@ -23,6 +23,7 @@ export interface IGame {
   addShipsPosition: (userId: string, shipsPosition: IShip[]) => void;
   handleAttack: ({ x, y, attackerId }: Coordinates & { attackerId: string }) => { status: ShootStatus, coords: Coordinates[] } | "wrong turn";
   hasEnemyAliveShips: (attackerId: string) => boolean;
+  getRandomAttackCoordinate: (attackerId: string) => Coordinates;
 
   sendToAllGamers: (message: string) => void;
 }
@@ -51,5 +52,5 @@ type GameWithMembersAndShips = IGame & {
 interface GameMemberWithShips {
   user: IUser;
   shipsPosition: IShip[];
-  currentPlayerIndex?: string | number;
+  sessionPlayerId?: string | number;
 }

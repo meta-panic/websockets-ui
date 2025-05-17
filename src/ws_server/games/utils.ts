@@ -1,3 +1,4 @@
+import { BOARD_X_MIN, BOARD_X_MAX, BOARD_Y_MIN, BOARD_Y_MAX } from "./game";
 import { Coordinates, IShip } from "./shipsPosition.interface";
 
 
@@ -11,7 +12,7 @@ function hit({ ships, coords }: { ships: IShip[], coords: Coordinates }): IShip 
     shipCoordinates.forEach((s) => {
       console.log(`shipCoordinates: ${s.x}, y: ${s.y}`);
     });
-    // Check if the attack coordinate matches any of the ship's coordinates
+
     if (shipCoordinates.some(shipCords => shipCords.x === x && shipCords.y === y)) {
       console.log("hit!");
 
@@ -61,21 +62,21 @@ function checkAllShipsKilled(shipsPosition: IShip[], hitCoordinates: Coordinates
 }
 
 function _isCoordinateInBounds(coord: Coordinates): boolean {
-  return coord.x >= 0 && coord.x < 10 && coord.y >= 0 && coord.y < 10;
+  return coord.x >= BOARD_X_MIN && coord.x <= BOARD_X_MAX && coord.y >= BOARD_Y_MIN && coord.y <= BOARD_Y_MAX;
 }
 
 function getCoordsAroundShip(ship: IShip) {
+  console.log(`getCoordsAroundShip. X: ${ship.position.x}, y: ${ship.position.y}`);
   const aroundCoords: Coordinates[] = [];
   const occupiedCoords = _calcShipCoords(ship);
 
-  // Use a Set to easily track and ensure uniqueness of coordinates
   const uniqueCoords = new Set<string>();
 
-  // Helper to add a coordinate if it's in bounds and not already added
   const addCoord = (x: number, y: number) => {
     const coord = { x, y };
     const key = `${x},${y}`;
-    // Check if in bounds and not already in the set of occupied or around coordinates
+    console.log(`_isCoordinateInBounds(x: ${coord.x}, y: ${coord.y}): ${_isCoordinateInBounds(coord)}`);
+
     if (_isCoordinateInBounds(coord) && !occupiedCoords.some(oc => oc.x === x && oc.y === y) && !uniqueCoords.has(key)) {
       aroundCoords.push(coord);
       uniqueCoords.add(key);
@@ -95,8 +96,10 @@ function getCoordsAroundShip(ship: IShip) {
     addCoord(segment.x + 1, segment.y + 1); // Bottom-Right
   });
 
+  aroundCoords.forEach((c) => {
+    console.log(`aroundCoords - ${c}`);
+  });
   return aroundCoords;
-
 }
 
 

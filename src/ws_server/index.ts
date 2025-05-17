@@ -69,6 +69,11 @@ const eventHandlers: EventHandler<EventNameType> = {
     attackHandler()(arg);
     setTurnHandler(gameId)(arg);
   },
+  "randomAttack": (arg) => {
+    const gameId = arg.data.gameId;
+    attackHandler()(arg);
+    setTurnHandler(gameId)(arg);
+  },
 
   // only for sending back //
   "update_room": () => { },// eslint-disable-line @typescript-eslint/no-empty-function
@@ -121,7 +126,7 @@ rl.on("line", (line: string) => {
         games.forEach((game, index) => {
           console.log(`${index}. game ${game.id}, current turn: ${game.attackerId}`);
           Object.entries(game.members).forEach(([memberId, member]) => {
-            console.log(`member name: ${member.user.name}, currentPlayerIndex: ${member.currentPlayerIndex}, userId: ${member.user.id}, is attacking?:${member.currentPlayerIndex === game.attackerId ? "yes" : "no"} shipsPosition: ${member.shipsPosition?.length ? "set" : "not set"}`);
+            console.log(`member name: ${member.user.name}, playerId: ${member.sessionPlayerId}, userId: ${member.user.id}, is attacking?:${member.sessionPlayerId === game.attackerId ? "yes" : "no"} shipsPosition: ${member.shipsPosition?.length ? "set" : "not set"}`);
           });
         });
         break;

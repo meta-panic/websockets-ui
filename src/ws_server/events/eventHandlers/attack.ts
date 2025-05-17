@@ -1,10 +1,11 @@
 import { Coordinates } from "../../games/shipsPosition.interface";
 import { ShootStatus } from "../event.interface";
+import { isAttackReq } from "../payload/attack";
 import { IHandler } from "./handler.interface";
 import { createResponse } from "./utils";
 
 
-const attackHandler: () => IHandler<"attack"> =
+const attackHandler: () => IHandler<"attack" | "randomAttack"> =
   () => ({ gameRepo, userRepo, data, wsClient }) => {
     const attackerId = data.indexPlayer;
 
@@ -14,11 +15,14 @@ const attackHandler: () => IHandler<"attack"> =
       return;
     }
 
-    const result: { status: ShootStatus, coords: Coordinates[] } | "wrong turn" = game.handleAttack({
-      x: data.x,
-      y: data.y,
-      attackerId
-    });
+    let attackData: Coordinates & { attackerId: string };
+    if (isAttackReq(data)) {
+      attackData = { x: data.x, y: data.y, attackerId };
+    } else {
+      const randomCoords = game.getRandomAttackCoordinate(attackerId);
+      attackData = { x: randomCoords.x, y: randomCoords.y, attackerId };
+    }
+    const result: { status: ShootStatus, coords: Coordinates[] } | "wrong turn" = game.handleAttack(attackData);
 
     if (result === "wrong turn") {
       return;
@@ -51,7 +55,6 @@ function sendResultOfAttack(result: { status: ShootStatus, coords: Coordinates[]
   });
 }
 
-
 function sendFinishGame(attackerId: string, sendFn: (msg: string) => void) {
   const responce = createResponse({
     type: "finish",
@@ -62,3 +65,4 @@ function sendFinishGame(attackerId: string, sendFn: (msg: string) => void) {
 
   sendFn(JSON.stringify(responce));
 }
+

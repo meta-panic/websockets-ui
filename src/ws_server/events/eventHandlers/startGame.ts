@@ -22,7 +22,7 @@ const startGameHandler: (gameId: string) => IHandler<"add_ships"> =
         type: "start_game",
         data: {
           ships: member.shipsPosition,
-          currentPlayerIndex: member.currentPlayerIndex || userId
+          currentPlayerIndex: member.sessionPlayerId || userId
         }
       });
 

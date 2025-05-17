@@ -1,3 +1,4 @@
+import { ShootStatus } from "../events/event.interface";
 import { IUser } from "../users/user.interface";
 import { Coordinates, IShip } from "./shipsPosition.interface";
 
@@ -5,6 +6,7 @@ export type Members<T extends { id: string }> = Record<T["id"], {
   user: T,
   shipsPosition?: IShip[],
   currentPlayerIndex: string;
+  hitCoordinates: Coordinates[];
 }>;
 
 export type MembersNotSet<T extends { id: string }> = Record<T["id"], {
@@ -19,7 +21,8 @@ export interface IGame {
   attackerId: string;
 
   addShipsPosition: (userId: string, shipsPosition: IShip[]) => void;
-  handleAttack: ({ x, y, attackerId }: Coordinates & { attackerId: number }) => void;
+  handleAttack: ({ x, y, attackerId }: Coordinates & { attackerId: string }) => { status: ShootStatus, coords: Coordinates[] } | "wrong turn";
+  hasEnemyAliveShips: (attackerId: string) => boolean;
 
   sendToAllGamers: (message: string) => void;
 }

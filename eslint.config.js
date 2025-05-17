@@ -21,6 +21,11 @@ export default tseslint.config(
       "comma-dangle": ["error", "never"],
       "quotes": ["error", "double"],
       "eol-last": ["error", "always"],
+      "@typescript-eslint/no-unused-expressions": ["error", {
+        "allowShortCircuit": true,
+        "allowTernary": true,
+        "allowTaggedTemplates": true
+      }]
     }
   },
 );

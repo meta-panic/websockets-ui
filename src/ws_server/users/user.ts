@@ -17,6 +17,10 @@ export class User implements IUser {
     this.id = generateUUID();
   }
 
+  addWin() {
+    this.winCount = this.winCount + 1;
+  }
+
   sendMessage(message: string) {
     this.webSocket.send(message);
   }

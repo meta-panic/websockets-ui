@@ -3,6 +3,7 @@ import { InMemoryDB } from "./DB/inMemoryDB";
 import { EventNameType } from "./events/event.interface";
 import { addShipsHandler } from "./events/eventHandlers/addShips";
 import { addUserToRoomHandler } from "./events/eventHandlers/addUserToRoom";
+import { attackHandler } from "./events/eventHandlers/attack";
 import { createGameHandler } from "./events/eventHandlers/createGame";
 import { createRoomHandler } from "./events/eventHandlers/createRoom";
 import { IHandler } from "./events/eventHandlers/handler.interface";
@@ -64,14 +65,16 @@ const eventHandlers: EventHandler<EventNameType> = {
     setTurnHandler(gameId)(arg);
   },
   "attack": (arg) => {
-    attackHandler()(args);
-    //attachFeedbackHandler()(args);
+    const gameId = arg.data.gameId;
+    attackHandler()(arg);
+    setTurnHandler(gameId)(arg);
   },
 
   // only for sending back //
   "update_room": () => { },// eslint-disable-line @typescript-eslint/no-empty-function
   "start_game": () => { },  // eslint-disable-line @typescript-eslint/no-empty-function
-  "turn": () => { }  // eslint-disable-line @typescript-eslint/no-empty-function
+  "turn": () => { }, // eslint-disable-line @typescript-eslint/no-empty-function
+  "finish": () => { }  // eslint-disable-line @typescript-eslint/no-empty-function
 };
 
 app.registerHandlers(eventHandlers);
@@ -135,11 +138,4 @@ rl.on("line", (line: string) => {
 
 console.log(`WebSocket server running on port ${WS_PORT}`);
 console.log("Type \"user\", \"room\", or \"game\" to see repository contents.");
-function setAttacherHandler(gameId: string) {
-  throw new Error("Function not implemented.");
-}
-
-function attackHandler() {
-  throw new Error("Function not implemented.");
-}
 

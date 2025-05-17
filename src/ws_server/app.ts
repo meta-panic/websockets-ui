@@ -59,7 +59,6 @@ export class App {
     if (isIncomingMessage(parsedClientData)) {
       const handler = this.eventHandlers[parsedClientData.type] as HandlerWrapper<typeof parsedClientData.type>;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       handler && handler({
         type: parsedClientData.type,
         data: parsedClientData.data,

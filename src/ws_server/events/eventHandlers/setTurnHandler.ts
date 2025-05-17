@@ -1,8 +1,9 @@
+import { EventNameType } from "../event.interface";
 import { IHandler } from "./handler.interface";
 import { createResponse } from "./utils";
 
 
-const setTurnHandler: (gameId: string) => IHandler<"add_ships"> =
+const setTurnHandler: (gameId: string) => IHandler<EventNameType> =
   (gameId: string) => ({ gameRepo }) => {
     const game = gameRepo.get(gameId);
     if (!game) {

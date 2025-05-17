@@ -8,6 +8,7 @@ import { StartGameRes } from "./payload/startGame";
 import { SetTurnRes } from "./payload/setTurn";
 import { AttackReq } from "./payload/attack";
 import { AttackFeedbackRes } from "./payload/attackFeedback";
+import { FinishRes } from "./payload/finish";
 
 interface RequestResponce<Req, Res> {
   request: Req,
@@ -23,6 +24,7 @@ export interface Events {
   start_game: RequestResponce<never, StartGameRes>;
   turn: RequestResponce<never, SetTurnRes>;
   attack: RequestResponce<AttackReq, AttackFeedbackRes>;
+  finish: RequestResponce<never, FinishRes>;
 }
 
 export const EVENT_NAME_LIST = [
@@ -33,7 +35,8 @@ export const EVENT_NAME_LIST = [
   "add_ships",
   "start_game",
   "turn",
-  "attack"
+  "attack",
+  "finish"
 ] satisfies (keyof Events)[];
 export type EventNameType = typeof EVENT_NAME_LIST[number];
 

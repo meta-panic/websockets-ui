@@ -2,5 +2,7 @@ export interface IUser {
   readonly id: string;
   readonly name: string;
   winCount: number;
+
   sendMessage: (message: string) => void;
+  addWin: () => void;
 }

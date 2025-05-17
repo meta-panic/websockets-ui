@@ -4,7 +4,7 @@ import { createResponse } from "./utils";
 
 
 const updateRoomHandler: () => IHandler<EventNameType> =
-  () => ({ roomRepo, wsClient }) => {
+  () => ({ roomRepo, broadcast }) => {
     const allRooms = roomRepo.getAll();
 
     const resData = allRooms
@@ -16,13 +16,12 @@ const updateRoomHandler: () => IHandler<EventNameType> =
         };
       });
 
-    const response = createResponse(
-      "update_room",
-      resData
-    );
+    const response = createResponse({
+      type: "update_room",
+      data: resData
+    });
 
-    console.log("response - ", response);
-    wsClient.send(JSON.stringify(response));
+    broadcast(JSON.stringify(response));
   };
 
 export { updateRoomHandler };

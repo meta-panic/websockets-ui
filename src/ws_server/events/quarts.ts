@@ -1,5 +1,4 @@
 import { EventNameType, IncomingMessage, EVENT_NAME_LIST } from "./event.interface";
-import { isRegistrationReq } from "./payload/registration";
 
 
 export type AllIncomingMessages = {

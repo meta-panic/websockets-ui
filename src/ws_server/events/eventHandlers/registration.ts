@@ -17,12 +17,11 @@ const registrationHandler: (userFactory: IUserFactory) => IHandler<"reg"> =
       index: newUser.id,
       error: false
     };
-    const response = createResponse(
-      "reg",
-      resData
-    );
+    const response = createResponse({
+      type: "reg",
+      data: resData
+    });
 
-    console.log("response - ", response);
     wsClient.send(JSON.stringify(response));
   };
 

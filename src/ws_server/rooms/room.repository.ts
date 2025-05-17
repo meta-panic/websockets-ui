@@ -10,6 +10,11 @@ export class RoomRepository implements IRepository<IRoom> {
     this.dbService = dbService;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(id: string, fields: Partial<IRoom>): void {
+    throw new Error("Method not implemented.");
+  }
+
   getAll() {
     return this.dbService.findAll();
   }
@@ -18,11 +23,11 @@ export class RoomRepository implements IRepository<IRoom> {
     return this.dbService.findById(id);
   }
 
-  add(user: IRoom) {
-    this.dbService.create(user);
+  add(room: IRoom) {
+    this.dbService.create(room);
   }
 
-  delete(user: IRoom) {
-    this.dbService.delete(user.id);
+  delete(room: IRoom) {
+    this.dbService.delete(room.id);
   }
 }

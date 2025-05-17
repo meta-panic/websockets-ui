@@ -4,20 +4,23 @@ import { IUser } from "./users/user.interface";
 import { IRepository } from "./DB/core/repository/repository.interface";
 import { EventNameType } from "./events/event.interface";
 import { isIncomingMessage } from "./events/quarts";
-import { IHandler } from "./events/eventHandlers/handler.interface";
 import { IRoom } from "./rooms/room.interface";
 import { EventHandler, HandlerWrapper } from ".";
+import { IGame } from "./games/game.interface";
 
 
 export class App {
   private readonly wsServer: WebSocketServer;
   private userRepo: IRepository<IUser>;
   private roomRepo: IRepository<IRoom>;
+  private gameRepo: IRepository<IGame>;
+
   private eventHandlers?: EventHandler<EventNameType>;
 
-  constructor({ port, userRepo, roomRepo }: { port: number, userRepo: IRepository<IUser>, roomRepo: IRepository<IRoom> }) {
+  constructor({ port, userRepo, roomRepo, gameRepo }: { port: number, userRepo: IRepository<IUser>, roomRepo: IRepository<IRoom>, gameRepo: IRepository<IGame> }) {
     this.userRepo = userRepo;
     this.roomRepo = roomRepo;
+    this.gameRepo = gameRepo;
 
     this.wsServer = new WebSocketServer({ port });
     this.wsServer.on("connection", (wsClient: WSType) => {
@@ -62,7 +65,9 @@ export class App {
         data: parsedClientData.data,
         wsClient: wsClient,
         userRepo: this.userRepo,
-        roomRepo: this.roomRepo
+        gameRepo: this.gameRepo,
+        roomRepo: this.roomRepo,
+        broadcast: this.broadcast.bind(this)
       });
 
       return;
@@ -71,9 +76,9 @@ export class App {
     console.error("Received an invalid or unexpected message format:", parsedClientData);
   }
 
-  // broadcast() {
-  //   this.wsServer.clients.forEach((client) => {
-
-  //   });
-  // }
+  broadcast(message: string) {
+    this.wsServer.clients.forEach((client) => {
+      client.send(message);
+    });
+  }
 }

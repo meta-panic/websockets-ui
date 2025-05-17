@@ -9,6 +9,11 @@ export class UserRepository implements IRepository<IUser> {
     this.dbService = dbService;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(id: string, fields: Partial<IUser>): void {
+    throw new Error("Method not implemented.");
+  }
+
   getAll() {
     return this.dbService.findAll();
   }

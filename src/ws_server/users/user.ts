@@ -1,7 +1,7 @@
 import { type WebSocket as WSType } from "ws";
 
 import { IUser } from "./user.interface";
-import { generateUUID } from "../utils";
+import { generateUUID } from "../utils/common";
 
 
 export class User implements IUser {

@@ -9,12 +9,7 @@ function hit({ ships, coords }: { ships: IShip[], coords: Coordinates }): IShip 
   for (const ship of ships) {
     const shipCoordinates: Coordinates[] = _calcShipCoords(ship);
 
-    shipCoordinates.forEach((s) => {
-      console.log(`shipCoordinates: ${s.x}, y: ${s.y}`);
-    });
-
     if (shipCoordinates.some(shipCords => shipCords.x === x && shipCords.y === y)) {
-      console.log("hit!");
 
       hitShip = ship;
       break;
@@ -41,7 +36,6 @@ function _calcShipCoords(ship: IShip): Coordinates[] {
     for (let i = 0; i < ship.length; i++) {
       shipCoordinates.push({ x: ship.position.x, y: ship.position.y + i });
     }
-
   } else { // Vertical
     for (let i = 0; i < ship.length; i++) {
       shipCoordinates.push({ x: ship.position.x + i, y: ship.position.y });
@@ -65,8 +59,11 @@ function _isCoordinateInBounds(coord: Coordinates): boolean {
   return coord.x >= BOARD_X_MIN && coord.x <= BOARD_X_MAX && coord.y >= BOARD_Y_MIN && coord.y <= BOARD_Y_MAX;
 }
 
+function getShipCoords(ship: IShip) {
+  return _calcShipCoords(ship);
+}
+
 function getCoordsAroundShip(ship: IShip) {
-  console.log(`getCoordsAroundShip. X: ${ship.position.x}, y: ${ship.position.y}`);
   const aroundCoords: Coordinates[] = [];
   const occupiedCoords = _calcShipCoords(ship);
 
@@ -75,7 +72,6 @@ function getCoordsAroundShip(ship: IShip) {
   const addCoord = (x: number, y: number) => {
     const coord = { x, y };
     const key = `${x},${y}`;
-    console.log(`_isCoordinateInBounds(x: ${coord.x}, y: ${coord.y}): ${_isCoordinateInBounds(coord)}`);
 
     if (_isCoordinateInBounds(coord) && !occupiedCoords.some(oc => oc.x === x && oc.y === y) && !uniqueCoords.has(key)) {
       aroundCoords.push(coord);
@@ -96,9 +92,6 @@ function getCoordsAroundShip(ship: IShip) {
     addCoord(segment.x + 1, segment.y + 1); // Bottom-Right
   });
 
-  aroundCoords.forEach((c) => {
-    console.log(`aroundCoords - ${c}`);
-  });
   return aroundCoords;
 }
 
@@ -107,4 +100,4 @@ function _isVertical(direction: boolean) {
   return direction;
 }
 
-export { hit, isShipKilled, checkAllShipsKilled, getCoordsAroundShip };
+export { hit, isShipKilled, checkAllShipsKilled, getCoordsAroundShip, getShipCoords };

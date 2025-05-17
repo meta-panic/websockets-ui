@@ -1,9 +1,9 @@
 import { ShootStatus } from "../events/event.interface";
 import { IUser } from "../users/user.interface";
-import { generateUUID } from "../utils";
+import { generateUUID } from "../utils/common";
 import { IGame, Members, MembersNotSet } from "./game.interface";
 import { Coordinates, IShip } from "./shipsPosition.interface";
-import { checkAllShipsKilled, getCoordsAroundShip, hit, isShipKilled } from "./utils";
+import { checkAllShipsKilled, getCoordsAroundShip, getShipCoords, hit, isShipKilled } from "./utils";
 
 
 export const BOARD_X_MIN = 0;
@@ -122,7 +122,7 @@ export class Game implements IGame {
 
     return {
       status: "killed",
-      coords: [{ x, y }, ...coordinateAroundKilledShip]
+      coords: [{ x, y }, ...coordinateAroundKilledShip, ...getShipCoords(hitShip)]
     };
   }
 
@@ -164,6 +164,10 @@ export class Game implements IGame {
     }
 
     if (defender.hitCoordinates.some(coord => coord.x === x && coord.y === y)) {
+      throw new Error(`Game ${this.id}: Coordinate ${x},${y} already hit.\n`);
+    }
+
+    if (this.missCoordinates[defender.sessionPlayerId].some(coord => coord.x === x && coord.y === y)) {
       throw new Error(`Game ${this.id}: Coordinate ${x},${y} already hit.\n`);
     }
 

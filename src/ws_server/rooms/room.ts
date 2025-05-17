@@ -1,6 +1,6 @@
 import { IRoom } from "./room.interface";
 import { IUser } from "../users/user.interface";
-import { generateUUID } from "../utils";
+import { generateUUID } from "../utils/common";
 
 export class Room implements IRoom {
   id: string;

@@ -10,6 +10,7 @@ import { AttackReq } from "./payload/attack";
 import { AttackFeedbackRes } from "./payload/attackFeedback";
 import { FinishRes } from "./payload/finish";
 import { RandomAttackReq } from "./payload/randomAttack";
+import { UpdateWinnersRes } from "./payload/updateWinners";
 
 interface RequestResponce<Req, Res> {
   request: Req,
@@ -27,6 +28,7 @@ export interface Events {
   attack: RequestResponce<AttackReq, AttackFeedbackRes>;
   finish: RequestResponce<never, FinishRes>;
   randomAttack: RequestResponce<RandomAttackReq, AttackFeedbackRes>;
+  update_winners: RequestResponce<never, UpdateWinnersRes>;
 }
 
 export const EVENT_NAME_LIST = [
@@ -39,7 +41,8 @@ export const EVENT_NAME_LIST = [
   "turn",
   "attack",
   "finish",
-  "randomAttack"
+  "randomAttack",
+  "update_winners"
 ] satisfies (keyof Events)[];
 export type EventNameType = typeof EVENT_NAME_LIST[number];
 

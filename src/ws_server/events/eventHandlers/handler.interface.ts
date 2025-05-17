@@ -15,3 +15,9 @@ export type IHandler<E extends EventNameType> = ({ type, data, userRepo, wsClien
     wsClient: WSType,
     broadcast: (message: string) => void,
   }) => void
+
+
+export type HandlerWrapper<E extends EventNameType> = (arg: Parameters<IHandler<E>>[0]) => void;
+export type EventHandler<T extends EventNameType> = {
+  [K in T]: HandlerWrapper<K>;
+};

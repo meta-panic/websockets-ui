@@ -30,9 +30,11 @@ const attackHandler: () => IHandler<"attack" | "randomAttack"> =
 
     sendResultOfAttack(result, attackerId, game?.sendToAllGamers.bind(game));
 
-    const isWin = !game.hasEnemyAliveShips(attackerId);
-    if (isWin) {
+    const isFinish = !game.hasEnemyAliveShips(attackerId);
+    if (isFinish) {
       sendFinishGame(attackerId, game?.sendToAllGamers.bind(game));
+
+      gameRepo.delete(game);
 
       const userId = "id" in wsClient ? (wsClient as ({ id: string }))?.id : undefined;
       userId && userRepo.get(userId)?.addWin();

@@ -1,12 +1,13 @@
 import { RawData, WebSocketServer, type WebSocket as WSType } from "ws";
-import { deepParse } from "./utils";
+
+import { deepParse } from "./utils/common";
 import { IUser } from "./users/user.interface";
 import { IRepository } from "./DB/core/repository/repository.interface";
 import { EventNameType } from "./events/event.interface";
 import { isIncomingMessage } from "./events/quarts";
 import { IRoom } from "./rooms/room.interface";
-import { EventHandler, HandlerWrapper } from ".";
 import { IGame } from "./games/game.interface";
+import { EventHandler, HandlerWrapper } from "./events/eventHandlers/handler.interface";
 
 
 export class App {

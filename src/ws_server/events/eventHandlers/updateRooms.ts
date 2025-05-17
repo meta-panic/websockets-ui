@@ -12,7 +12,10 @@ const updateRoomHandler: () => IHandler<EventNameType> =
       .map((room) => {
         return {
           roomId: room.id,
-          roomUsers: room.members
+          roomUsers: room.members.map((member) => ({
+            name: member.name,
+            index: member.id
+          }))
         };
       });
 

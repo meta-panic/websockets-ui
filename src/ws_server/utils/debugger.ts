@@ -10,7 +10,8 @@ function runDebugger(
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: "> "
+    prompt: "type user, room or game > ",
+    terminal: false
   });
 
   rl.prompt();

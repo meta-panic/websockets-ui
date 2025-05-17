@@ -6,7 +6,7 @@ const __dirname = path.dirname(__filename);
 
 export default () => {
     return {
-        entry: './src/index.ts',
+        entry: './src/ws_server/index.ts',
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'bundle.js',

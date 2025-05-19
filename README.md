@@ -1,31 +1,36 @@
-# RSSchool NodeJS websocket task template
-> Static http server and base task packages. 
-> By default WebSocket client tries to connect to the 3000 port.
+# RSSchool NodeJS WebSocket Task
 
 ## Installation
-1. Clone/download repo
-2. `npm install`
+1. Clone/download the repository.
 
-## Usage
-**Development**
+```bash
+git clone https://github.com/meta-panic/websockets-ui.git
+```
+2. Run `npm install` to install dependencies.
 
-`npm run start:dev`
+## You need to run frontend and backend separately!
 
-* App served @ `http://localhost:8181` with nodemon
+### Run frontend
+To run frontend in dev-mode use:
+```bash
+npm run startFront:dev
+```
+or in prodaction-mode:
+```bash
+npm run startFront
+```
 
-**Production**
+### Run backend
+To run backend in dev-mode use:
+```bash
+npm run startWS:dev
+```
+or in prodaction-mode:
+```bash
+npm run startWS
+```
 
-`npm run start`
-
-* App served @ `http://localhost:8181` without nodemon
-
----
-
-**All commands**
-
-Command | Description
---- | ---
-`npm run start:dev` | App served @ `http://localhost:8181` with nodemon
-`npm run start` | App served @ `http://localhost:8181` without nodemon
-
-**Note**: replace `npm` with `yarn` in `package.json` if you use yarn.
+### Usage
+Run frontend and backend and then:
+- The app is served at `http://localhost:8181`
+- Enjoy the game!
